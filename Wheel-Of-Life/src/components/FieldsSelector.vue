@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router';
+import type { FieldDictionary } from '../classes/WheelOfLife'
 import ValueSelector from './ValueSelector.vue'
 import LifeField from '../classes/LifeField'
 import wheel from '../data/wheel'
@@ -16,15 +17,17 @@ let currentFieldIndex = ref<number>(0);
 let currentFieldName = ref<string>(fieldNames[currentFieldIndex.value]);
 let currentDescription = ref<string>(fieldDescriptions[currentFieldIndex.value]);
 
-function onClick(value: number): never {
+function onClick(value: number): void {
     wheel.setField(currentFieldName.value, value);
     
     currentFieldIndex.value++;
     currentFieldName.value = fieldNames[currentFieldIndex.value];
     currentDescription.value = fieldDescriptions[currentFieldIndex.value];
     
-    if (currentFieldIndex.value >= fields.length)
+    if (currentFieldIndex.value >= fields.length) {
+        wheel.setAsFilled()
         router.push('/rueda-de-vida');
+    }
 }
 
 </script>

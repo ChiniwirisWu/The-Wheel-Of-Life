@@ -1,15 +1,16 @@
 import LifeField from './LifeField';
 
-type FieldDictionary = { [key: string]: LifeField };
+export type FieldDictionary = { [key: string]: LifeField };
 
 export default class WheelOfLife {
     private fields: FieldDictionary = {};
+    private isFilled: boolean = false;
 
-    private addField(name: string, description: string): never {
+    private addField(name: string, description: string): void {
         this.fields[name] = new LifeField(name, description); 
     }
 
-    constructor() {
+    private addDefaultFields() {
         this.addField("Salud", "Bienestar físico, mental y emocional");
         this.addField("Relaciones", "Calidad de interacciones sociales, familiares y de amistad");
         this.addField("Amor", "Calidad de interacciones amorosas o románticas");
@@ -20,11 +21,29 @@ export default class WheelOfLife {
         this.addField("Finanzas", "Relación con tus ingresos, seguridad financiera y administración de recursos económicos");
     }
 
-    public setField(name: string, score: number): never {
+    constructor() {
+        this.reset(); 
+    }
+
+    public setField(name: string, score: number): void {
         this.fields[name].setScore(score);
     }
 
     public getFields(): FieldDictionary {
         return this.fields; 
+    }
+
+    public isEmpty(): boolean {
+        return !this.isFilled
+    }
+
+    public setAsFilled(): void {
+        this.isFilled = true;
+    }
+
+    public reset(): void {
+        this.isFilled = false;
+        this.fields = {};
+        this.addDefaultFields();
     }
 }

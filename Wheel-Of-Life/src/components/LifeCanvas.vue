@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router';
+import type { FieldDictionary } from '../classes/WheelOfLife'
 import ApexCharts from 'apexcharts'
-import WheelOfLife from '../classes/WheelOfLife.ts'
-import LifeField from '../classes/LifeField.ts'
-import wheel from '../data/wheel.ts'
+import LifeField from '../classes/LifeField'
+import wheel from '../data/wheel'
 
 const chartEl = ref<HTMLElement | null>(null);
+const router = useRouter();
+
 
 const dictionary: FieldDictionary = wheel.getFields();
 const fields: LifeField[] = Object.values(dictionary); 
 const names: string[] = fields.map((field) => field.getName() );
-const values: number[] = fields.map((field) => field.getScore().getValue() );
+const values: number[] = fields.map((field) =>  field.getScore()?.getValue() ?? 0 );
 
 onMounted( () => {
+    if (wheel.isEmpty()) {
+        wheel.reset();
+        router.push('/');
+    }
+
     const options = {
         series: values,
         labels: names,
@@ -25,7 +33,7 @@ onMounted( () => {
         chart: { type: 'polarArea', width: 500 },
         stroke: { colors: ['#fff'] },
         fill: { opacity: 0.8 },
-        yaxis: { show: false },
+        yaxis: { show: false, max: 10 },
         legend: { position: 'bottom' },
     
         plotOptions: {
@@ -48,7 +56,7 @@ onMounted( () => {
     if (chartEl.value) {
         const chart = new ApexCharts(chartEl.value, options);
         chart.render();
-    }
+    } 
 });
          
 </script>
